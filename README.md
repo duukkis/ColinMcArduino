@@ -1,6 +1,6 @@
 # ColinMcArduino
 
-`code()`
+```
 /*************************************************************
 1. Download this: https://www.arduino.cc/en/main/software
 2. Write some good code into loop function
@@ -151,4 +151,4 @@ void loop(){
   fullTurn();
   
 }
-`code()`
+```
