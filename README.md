@@ -16,8 +16,10 @@ int pinBstrength = 11;
 int echoPin = 4;
 int trigPin = 5;
 
-long duration, cm, inches;
+// cm has the distance from wall
+long duration, cm;
 
+// dont touch this
 void setup() {
   //Setup Channel A
   pinMode(pinAmotor, OUTPUT); //Initiates Motor Channel A pin
@@ -45,9 +47,6 @@ int sensorRead(){
   pinMode(echoPin, INPUT);
   duration = pulseIn(echoPin, HIGH);
   cm = (duration/2) / 29.1;
-  Serial.print(cm);
-  Serial.print("cm");
-  Serial.println();
 }
 
 void turnLeft(int howMuch){
