@@ -4,6 +4,22 @@
 /*************************************************************
 1. Download this: https://www.arduino.cc/en/main/software
 2. Write some good code into loop function
+some notes
+  - car slides after motorA is shutdown
+  - there is delay before stopMotorB is called for that reason
+  - tested on laminaatti - plenty of sliding
+goForwardUntil(cm) function that is missing is something like
+
+void goForwardUntil(int untilCm){
+  goForward(123);
+  sensorRead();
+  while(untilCm > cm){
+    delay(50);
+    sensorRead();
+  }
+  stopMotorA();
+}
+
 *************************************************************/
 int pinAmotor = 12;
 int pinAbrake = 9;
