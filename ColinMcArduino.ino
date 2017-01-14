@@ -193,7 +193,8 @@ void doSpeaker(){
 void loop(){
   doSpeaker();
   fullforwardUntil(40, 180);
-  int randNumber = random(1, 3);
+  fullTurn();
+  int randNumber = random(1, 3); // 3 is full turn and forward
   switch (randNumber) {
     case 1:
       leftTurn();
@@ -203,11 +204,7 @@ void loop(){
       rightTurn();
       goForwardMS(180, 2000);
       break;
-    default:
-      fullTurn();
-      break;
   }
-  
   delay(1000);  
 }
 
