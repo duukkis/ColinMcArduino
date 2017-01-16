@@ -9,8 +9,8 @@ int pinBmotor = 13;
 int pinBbrake = 8;
 int pinBstrength = 11;
 
-int echoPin = 4;
-int trigPin = 5;
+int echoPin = 5;
+int trigPin = 4;
 
 int speaker = 7;
 
@@ -22,11 +22,13 @@ long duration, cm;
 
 int stopped = 0;
 
-long pietso;
+byte pietso = 0;
 
 // this depends on battery voltage
 int masterspeed = 160;
-int alarmCm = 30;
+int alarmCmRed = 10;
+int alarmCm = 20;
+int alarmCmGreen = 40;
 
 void setup() {
   //Setup Channel A
@@ -67,15 +69,15 @@ void sensorRead(){
   pinMode(echoPin, INPUT);
   duration = pulseIn(echoPin, HIGH);
   cm = (duration/2) / 29.1;
-  if(cm < 15){
+  if(cm < alarmCmRed){
     digitalWrite(green, HIGH);
     digitalWrite(yellow, HIGH);
     digitalWrite(red, HIGH);
-  } else if(cm < 30){
+  } else if(cm < alarmCm){
     digitalWrite(green, HIGH);
     digitalWrite(yellow, HIGH);
     digitalWrite(red, LOW);
-  } else if (cm < 60){
+  } else if (cm < alarmCmGreen){
     digitalWrite(green, HIGH);
     digitalWrite(yellow, LOW);
     digitalWrite(red, LOW);
@@ -84,10 +86,11 @@ void sensorRead(){
     digitalWrite(yellow, LOW);
     digitalWrite(red, LOW);
   }
-/*  pietso = digitalRead(green);
-  if(pietso == 1){
+
+  pietso = analogRead(5);
+  if(pietso > 100){
     stopAB();
-  }*/
+  }
 }
 
 void turnLeft(int howMuch){
@@ -138,9 +141,11 @@ void goForwardMS(int howMuch, int milliseconds){
     if(cm < alarmCm){
       alarmBrake();
       sensorRead();
+      // if alarm happened at first
       if(i == 0){
         stopped++;
       }
+      cm = 60;
     }
   }
   stopMotorA();
@@ -183,7 +188,7 @@ void goBackwardLeft(int howMuch, int milliseconds){
   stopMotorB();
 }
 
-int turnDelay = 300;
+int turnDelay = 200;
 
 void fullTurn(){
   alarmCm = 5;
@@ -195,33 +200,21 @@ void fullTurn(){
   delay(turnDelay);
   goForwardRight(masterspeed,1200);
   delay(turnDelay);
-  alarmCm = 30;
+  alarmCm = 20;
 }
 
 void leftTurn(){
-  goBackwardRight(masterspeed,1200);
+  goBackwardRight(masterspeed,1600);
   delay(turnDelay);
   goForwardLeft(masterspeed,1200);
   delay(turnDelay);
 }
 
 void rightTurn(){
-  goBackwardLeft(masterspeed,1200);
+  goBackwardLeft(masterspeed,1600);
   delay(turnDelay);
   goForwardRight(masterspeed,1200);
   delay(turnDelay);
-}
-
-
-void fullforwardUntil(int untilCm, int speed){
-  stopMotorB();
-  goForward(speed);
-  sensorRead();
-  while(cm > untilCm){
-    sensorRead();
-  }
-  // set the old value
-  stopMotorA();
 }
 
 void startSpeaker(){
@@ -234,35 +227,36 @@ void endSpeaker(){
 }
 
 
-
 void loop(){
   startSpeaker();
-  fullforwardUntil(40, masterspeed);
   if(stopped == 5){
     stopped = 0;
     goBackwardMS(masterspeed, 1200);
     alarmCm = 20;
   }
   
-  int randNumber = random(1, 4); // 3 is full turn and forward
+  int randNumber = random(1, 4);
   switch (randNumber) {
     case 1:
       leftTurn();
+      goForwardMS(masterspeed, 5000);
       break;
     case 2:
       rightTurn();
+      goForwardMS(masterspeed, 5000);
       break;
     case 3:
       fullTurn();
+      goForwardMS(masterspeed, 5000);
       break;
     case 4:
-      goBackwardMS(masterspeed, 2000);
+      rightTurn();
+      goForwardMS(masterspeed, 5000);
       break;
   }
-  alarmCm = 30;
+  alarmCm = 20;
   delay(500);
   endSpeaker();
 }
-
 
 
